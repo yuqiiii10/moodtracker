@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Soft Blue Mood Tracker</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+transition:0.3s;
+}
+
+body{
+background:linear-gradient(180deg,#dceeff,#f6fbff);
+min-height:100vh;
+overflow-x:hidden;
+color:#355070;
+padding:20px;
+}
+
+/* DARK MODE */
+
+body.dark-mode{
+background:linear-gradient(180deg,#0f172a,#111827);
+color:#e5f3ff;
+}
+
+body.dark-mode .card,
+body.dark-mode .header,
+body.dark-mode .login-box{
+background:#1e293b;
+color:white;
+}
+
+body.dark-mode textarea,
+body.dark-mode input,
+body.dark-mode select{
+background:#334155;
+color:white;
+}
+
+body.dark-mode .mood-btn,
+body.dark-mode .history-card{
+background:#334155;
+color:white;
+}
+
+body.dark-mode #runnerArea{
+background:linear-gradient(to bottom,#1e293b,#0f172a);
+}
+
+/* FLOATING */
+
+.bubble{
+position:fixed;
+border-radius:50%;
+background:rgba(255,255,255,0.3);
+animation:float 10s infinite ease-in-out;
+z-index:-1;
+}
+
+.b1{
+width:150px;
+height:150px;
+top:10%;
+left:5%;
+}
+
+.b2{
+width:100px;
+height:100px;
+right:10%;
+top:20%;
+}
+
+.b3{
+width:120px;
+height:120px;
+bottom:10%;
+left:40%;
+}
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-25px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+/* LOGIN */
+
+#loginScreen{
+position:fixed;
+inset:0;
+background:linear-gradient(180deg,#cde8ff,#f5fbff);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+padding:20px;
+}
+
+.login-box{
+background:white;
+padding:40px;
+border-radius:30px;
+width:100%;
+max-width:400px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.login-box input{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:15px;
+background:#eef7ff;
+font-size:1rem;
+outline:none;
+}
+
+.login-box button{
+width:100%;
+padding:15px;
+margin-top:20px;
+border:none;
+border-radius:15px;
+background:#7ec3ff;
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+/* BUTTON */
+
+#themeToggle{
+position:fixed;
+top:15px;
+right:15px;
+padding:12px 18px;
+border:none;
+border-radius:20px;
+background:#7ec3ff;
+color:white;
+cursor:pointer;
+z-index:999;
+}
+
+.logout-btn{
+margin-top:20px;
+padding:12px 20px;
+border:none;
+border-radius:15px;
+background:#ff6b81;
+color:white;
+cursor:pointer;
+font-weight:600;
+}
+
+/* HEADER */
+
+.header{
+background:#eef7ff;
+padding:30px;
+border-radius:30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:25px;
+}
+
+.header h1{
+font-size:3rem;
+}
+
+.hero{
+font-size:90px;
+animation:bounce 3s infinite;
+}
+
+@keyframes bounce{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-10px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:25px;
+border-radius:30px;
+margin-bottom:25px;
+}
+
+/* MOODS */
+
+.moods{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.mood-btn{
+flex:1;
+min-width:120px;
+padding:16px;
+border:none;
+border-radius:20px;
+background:#eef7ff;
+cursor:pointer;
+font-size:1rem;
+font-weight:500;
+}
+
+.active{
+background:#7ec3ff !important;
+color:white;
+}
+
+/* TEXTAREA */
+
+textarea{
+width:100%;
+margin-top:20px;
+padding:20px;
+border:none;
+border-radius:20px;
+background:#f2f8ff;
+min-height:120px;
+outline:none;
+resize:none;
+}
+
+/* SAVE BUTTON */
+
+.save-btn{
+width:100%;
+margin-top:20px;
+padding:18px;
+border:none;
+border-radius:20px;
+background:#7ec3ff;
+color:white;
+font-size:1rem;
+cursor:pointer;
+font-weight:600;
+}
+
+/* HISTORY */
+
+.history{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+margin-top:20px;
+}
+
+.history-card{
+background:#eef7ff;
+padding:20px;
+border-radius:20px;
+word-wrap:break-word;
+}
+
+.delete-btn{
+margin-top:15px;
+padding:10px 15px;
+border:none;
+border-radius:12px;
+background:#ff6b81;
+color:white;
+cursor:pointer;
+}
+
+/* GAME SETTINGS */
+
+.game-settings{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+margin-top:20px;
+flex-wrap:wrap;
+}
+
+.game-settings select{
+padding:12px 15px;
+border:none;
+border-radius:15px;
+background:#eef7ff;
+font-size:1rem;
+outline:none;
+cursor:pointer;
+}
+
+.timer-box{
+padding:12px 18px;
+background:#7ec3ff;
+color:white;
+border-radius:15px;
+font-weight:600;
+}
+
+/* MEMORY GAME */
+
+#memoryGame{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(70px,1fr));
+gap:12px;
+margin-top:20px;
+}
+
+.memory-card{
+aspect-ratio:1/1;
+background:#7ec3ff;
+border-radius:18px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:2rem;
+cursor:pointer;
+color:transparent;
+user-select:none;
+}
+
+.memory-card.show{
+background:white;
+color:black;
+}
+
+/* RUNNER GAME */
+
+#runnerArea{
+position:relative;
+width:100%;
+height:320px;
+background:linear-gradient(to bottom,#dff1ff,#f7fbff);
+border-radius:25px;
+overflow:hidden;
+margin-top:20px;
+}
+
+#runnerBox{
+position:absolute;
+width:70px;
+height:70px;
+background:#7ec3ff;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:2rem;
+cursor:pointer;
+top:50px;
+left:50px;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+padding:20px;
+opacity:0.7;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.header{
+flex-direction:column;
+text-align:center;
+}
+
+.header h1{
+font-size:2rem;
+}
+
+.hero{
+font-size:70px;
+}
+
+#memoryGame{
+grid-template-columns:repeat(4,1fr);
+}
+
+.memory-card{
+font-size:1.4rem;
+}
+
+}
+
+@media(max-width:480px){
+
+.mood-btn{
+min-width:100%;
+}
+
+.hero{
+font-size:60px;
+}
+
+.header h1{
+font-size:1.7rem;
+}
+
+.memory-card{
+font-size:1.1rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginScreen">
+
+<div class="login-box">
+
+<h1 id="formTitle">
+☁️ Login
+</h1>
+
+<p id="formText">
+Login to Mood Tracker 💙
+</p>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="handleAuth()" id="authButton">
+Login
+</button>
+
+<p style="margin-top:20px;">
+
+<span id="toggleText">
+Don't have an account?
+</span>
+
+<span
+onclick="toggleForm()"
+style="color:#5baeff;cursor:pointer;font-weight:600;">
+
+Sign Up
+
+</span>
+
+</p>
+
+</div>
+
+</div>
+
+<!-- FLOATING -->
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+
+<!-- THEME -->
+
+<button id="themeToggle">
+🌙 Dark Mode
+</button>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div>
+
+<h1>
+☁️ Mood Tracker
+</h1>
+
+<p>
+Track your feelings with cozy vibes 💙
+</p>
+
+<button class="logout-btn" onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+<div class="hero">
+🩵
+</div>
+
+</div>
+
+<!-- MOOD -->
+
+<div class="card">
+
+<h2>
+How are you today?
+</h2>
+
+<div class="moods">
+
+<button class="mood-btn"
+onclick="selectMood(this,'😄 Happy')">
+😄 Happy
+</button>
+
+<button class="mood-btn"
+onclick="selectMood(this,'😊 Calm')">
+😊 Calm
+</button>
+
+<button class="mood-btn"
+onclick="selectMood(this,'😐 Okay')">
+😐 Okay
+</button>
+
+<button class="mood-btn"
+onclick="selectMood(this,'😢 Sad')">
+😢 Sad
+</button>
+
+</div>
+
+<textarea
+id="note"
+placeholder="Write your thoughts here...">
+</textarea>
+
+<button class="save-btn" onclick="saveMood()">
+Save Mood
+</button>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card">
+
+<h2>
+Mood History 📅
+</h2>
+
+<div class="history" id="history"></div>
+
+</div>
+
+<!-- SAD GAME -->
+
+<div class="card"
+id="sadGame"
+style="display:none;">
+
+<h2>
+Memory Match Game 🧠
+</h2>
+
+<p>
+Match the same emojis 💙
+</p>
+
+<div class="game-settings">
+
+<select id="memoryDifficulty">
+
+<option value="easy">
+Easy
+</option>
+
+<option value="medium">
+Medium
+</option>
+
+<option value="hard">
+Hard
+</option>
+
+</select>
+
+<div class="timer-box">
+
+⏰ Time:
+<span id="memoryTime">
+60
+</span>s
+
+</div>
+
+</div>
+
+<div id="memoryGame"></div>
+
+<h3 style="margin-top:20px;">
+Score:
+<span id="score">
+0
+</span>
+</h3>
+
+<button
+class="save-btn"
+onclick="startMemoryGame()">
+
+🔄 Restart Game
+
+</button>
+
+</div>
+
+<!-- OKAY GAME -->
+
+<div class="card"
+id="okayGame"
+style="display:none;">
+
+<h2>
+Click Runner ⚡
+</h2>
+
+<p>
+Click the moving box ✨
+</p>
+
+<div class="game-settings">
+
+<select id="runnerDifficulty">
+
+<option value="easy">
+Easy
+</option>
+
+<option value="medium">
+Medium
+</option>
+
+<option value="hard">
+Hard
+</option>
+
+</select>
+
+<div class="timer-box">
+
+⏰ Time:
+<span id="runnerTime">
+30
+</span>s
+
+</div>
+
+</div>
+
+<div id="runnerArea">
+
+<div id="runnerBox">
+⚡
+</div>
+
+</div>
+
+<h3 style="margin-top:20px;">
+Score:
+<span id="runnerScore">
+0
+</span>
+</h3>
+
+<button
+class="save-btn"
+onclick="resetRunnerGame()">
+
+🔄 Reset Score
+
+</button>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+Made with soft blue energy ☁️💙
+</div>
+
+</div>
+
+<script>
+
+/* LOGIN */
+
+let isLogin = true;
+
+function toggleForm(){
+
+isLogin = !isLogin;
+
+if(isLogin){
+
+formTitle.innerHTML = "☁️ Login";
+formText.innerHTML = "Login to Mood Tracker 💙";
+authButton.innerHTML = "Login";
+toggleText.innerHTML =
+"Don't have an account?";
+
+}else{
+
+formTitle.innerHTML = "☁️ Sign Up";
+formText.innerHTML =
+"Create your cozy account 💙";
+authButton.innerHTML =
+"Create Account";
+toggleText.innerHTML =
+"Already have an account?";
+
+}
+
+}
+
+function handleAuth(){
+
+const username =
+document.getElementById("username")
+.value.trim();
+
+const password =
+document.getElementById("password")
+.value.trim();
+
+if(username === "" || password === ""){
+
+alert("Sila isi semua ruangan 💙");
+return;
+
+}
+
+let users =
+JSON.parse(localStorage.getItem("users"))
+|| [];
+
+if(!isLogin){
+
+const existingUser =
+users.find(user =>
+user.username === username
+);
+
+if(existingUser){
+
+alert("Nama pengguna sudah digunakan ❌");
+return;
+
+}
+
+users.push({
+username,
+password
+});
+
+localStorage.setItem(
+"users",
+JSON.stringify(users)
+);
+
+alert("Akaun berjaya dicipta ✨");
+
+toggleForm();
+
+return;
+
+}
+
+const userExist =
+users.find(user =>
+user.username === username
+);
+
+if(!userExist){
+
+alert("Anda belum signup ❌");
+return;
+
+}
+
+if(userExist.password !== password){
+
+alert("Sila masukkan katalaluan atau nama pengguna yang betul ❌");
+return;
+
+}
+
+localStorage.setItem(
+"loggedIn",
+"true"
+);
+
+localStorage.setItem(
+"currentUser",
+username
+);
+
+loginScreen.style.display = "none";
+
+loadMoods();
+
+alert("Selamat datang " + username + " 💙");
+
+}
+
+if(localStorage.getItem("loggedIn")
+=== "true"){
+
+loginScreen.style.display = "none";
+
+loadMoods();
+
+}
+
+function logout(){
+
+localStorage.removeItem("loggedIn");
+localStorage.removeItem("currentUser");
+
+location.reload();
+
+}
+
+/* DARK MODE */
+
+const toggleBtn =
+document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme")
+=== "dark"){
+
+document.body.classList.add("dark-mode");
+
+toggleBtn.innerHTML =
+"☀️ Light Mode";
+
+}
+
+toggleBtn.onclick = function(){
+
+document.body.classList.toggle("dark-mode");
+
+if(document.body.classList.contains("dark-mode")){
+
+localStorage.setItem("theme","dark");
+
+toggleBtn.innerHTML =
+"☀️ Light Mode";
+
+}else{
+
+localStorage.setItem("theme","light");
+
+toggleBtn.innerHTML =
+"🌙 Dark Mode";
+
+}
+
+};
+
+/* MOOD */
+
+let selectedMood = "";
+
+function selectMood(button,mood){
+
+document.querySelectorAll(".mood-btn")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+button.classList.add("active");
+
+selectedMood = mood;
+
+sadGame.style.display = "none";
+okayGame.style.display = "none";
+
+if(mood.includes("Sad")){
+
+sadGame.style.display = "block";
+
+startMemoryGame();
+
+}
+
+if(mood.includes("Okay")){
+
+okayGame.style.display = "block";
+
+resetRunnerGame();
+
+}
+
+}
+
+/* SAVE MOOD */
+
+function saveMood(){
+
+const note =
+document.getElementById("note")
+.value.trim();
+
+if(selectedMood === ""){
+
+alert("Please select your mood 💙");
+return;
+
+}
+
+const currentUser =
+localStorage.getItem("currentUser");
+
+const moodKey =
+"moods_" + currentUser;
+
+const moods =
+JSON.parse(localStorage.getItem(moodKey))
+|| [];
+
+moods.push({
+
+mood:selectedMood,
+note:note,
+date:new Date().toLocaleString()
+
+});
+
+localStorage.setItem(
+moodKey,
+JSON.stringify(moods)
+);
+
+document.getElementById("note")
+.value = "";
+
+document.querySelectorAll(".mood-btn")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+selectedMood = "";
+
+loadMoods();
+
+alert("Mood Saved ✨");
+
+}
+
+/* DELETE */
+
+function deleteMood(index){
+
+const currentUser =
+localStorage.getItem("currentUser");
+
+const moodKey =
+"moods_" + currentUser;
+
+let moods =
+JSON.parse(localStorage.getItem(moodKey))
+|| [];
+
+moods.splice(index,1);
+
+localStorage.setItem(
+moodKey,
+JSON.stringify(moods)
+);
+
+loadMoods();
+
+}
+
+/* LOAD HISTORY */
+
+function loadMoods(){
+
+const history =
+document.getElementById("history");
+
+history.innerHTML = "";
+
+const currentUser =
+localStorage.getItem("currentUser");
+
+const moodKey =
+"moods_" + currentUser;
+
+const moods =
+JSON.parse(localStorage.getItem(moodKey))
+|| [];
+
+[...moods].reverse().forEach(
+(data,reverseIndex)=>{
+
+const actualIndex =
+moods.length - 1 - reverseIndex;
+
+history.innerHTML += `
+
+<div class="history-card">
+
+<p>
+${data.date}
+</p>
+
+<h3>
+${data.mood}
+</h3>
+
+<p>
+${data.note || "No notes added 💙"}
+</p>
+
+<button
+class="delete-btn"
+onclick="deleteMood(${actualIndex})">
+
+🗑 Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* MEMORY GAME */
+
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let score = 0;
+let memoryTimer;
+let memoryTimeLeft = 60;
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+const j =
+Math.floor(Math.random()*(i+1));
+
+[array[i],array[j]]
+=
+[array[j],array[i]];
+
+}
+
+return array;
+
+}
+
+function getMemoryEmojis(){
+
+const difficulty =
+document.getElementById("memoryDifficulty")
+.value;
+
+if(difficulty === "easy"){
+
+memoryTimeLeft = 60;
+
+return [
+
+"💙","💙",
+"⭐","⭐",
+"☁️","☁️",
+"🩵","🩵"
+
+];
+
+}
+
+if(difficulty === "medium"){
+
+memoryTimeLeft = 45;
+
+return [
+
+"💙","💙",
+"⭐","⭐",
+"☁️","☁️",
+"🩵","🩵",
+"🌈","🌈",
+"✨","✨"
+
+];
+
+}
+
+memoryTimeLeft = 30;
+
+return [
+
+"💙","💙",
+"⭐","⭐",
+"☁️","☁️",
+"🩵","🩵",
+"🌈","🌈",
+"✨","✨",
+"🌸","🌸",
+"🫧","🫧"
+
+];
+
+}
+
+function startMemoryGame(){
+
+clearInterval(memoryTimer);
+
+const game =
+document.getElementById("memoryGame");
+
+game.innerHTML = "";
+
+score = 0;
+
+document.getElementById("score")
+.innerText = score;
+
+const emojis =
+shuffle(getMemoryEmojis());
+
+document.getElementById("memoryTime")
+.innerText = memoryTimeLeft;
+
+memoryTimer = setInterval(()=>{
+
+memoryTimeLeft--;
+
+document.getElementById("memoryTime")
+.innerText = memoryTimeLeft;
+
+if(memoryTimeLeft <= 0){
+
+clearInterval(memoryTimer);
+
+alert(
+"⏰ Time's up!\nYour score: " + score
+);
+
+}
+
+},1000);
+
+emojis.forEach(emoji=>{
+
+const card =
+document.createElement("div");
+
+card.classList.add("memory-card");
+
+card.dataset.emoji = emoji;
+
+card.innerText = emoji;
+
+card.onclick = () => flipCard(card);
+
+game.appendChild(card);
+
+});
+
+}
+
+function flipCard(card){
+
+if(lockBoard) return;
+
+if(card.classList.contains("show"))
+return;
+
+card.classList.add("show");
+
+if(!firstCard){
+
+firstCard = card;
+
+return;
+
+}
+
+secondCard = card;
+
+lockBoard = true;
+
+if(firstCard.dataset.emoji ===
+secondCard.dataset.emoji){
+
+score++;
+
+document.getElementById("score")
+.innerText = score;
+
+resetCards();
+
+}else{
+
+setTimeout(()=>{
+
+firstCard.classList.remove("show");
+
+secondCard.classList.remove("show");
+
+resetCards();
+
+},1000);
+
+}
+
+}
+
+function resetCards(){
+
+[firstCard,secondCard,lockBoard]
+=
+[null,null,false];
+
+}
+
+/* RUNNER GAME */
+
+let runnerScore = 0;
+
+let runnerTimer;
+
+let runnerTimeLeft = 30;
+
+let moveSpeed = 1000;
+
+let autoMove;
+
+const runnerBox =
+document.getElementById("runnerBox");
+
+function setupRunnerDifficulty(){
+
+const difficulty =
+document.getElementById("runnerDifficulty")
+.value;
+
+if(difficulty === "easy"){
+
+runnerTimeLeft = 30;
+moveSpeed = 1000;
+
+}
+
+else if(difficulty === "medium"){
+
+runnerTimeLeft = 25;
+moveSpeed = 700;
+
+}
+
+else{
+
+runnerTimeLeft = 20;
+moveSpeed = 400;
+
+}
+
+document.getElementById("runnerTime")
+.innerText = runnerTimeLeft;
+
+}
+
+function moveRunnerBox(){
+
+const area =
+document.getElementById("runnerArea");
+
+const maxX =
+area.clientWidth - 80;
+
+const maxY =
+area.clientHeight - 80;
+
+runnerBox.style.left =
+Math.random() * maxX + "px";
+
+runnerBox.style.top =
+Math.random() * maxY + "px";
+
+}
+
+runnerBox.onclick = function(){
+
+runnerScore++;
+
+document.getElementById("runnerScore")
+.innerText = runnerScore;
+
+moveRunnerBox();
+
+};
+
+function resetRunnerGame(){
+
+clearInterval(runnerTimer);
+
+clearInterval(autoMove);
+
+runnerScore = 0;
+
+document.getElementById("runnerScore")
+.innerText = runnerScore;
+
+setupRunnerDifficulty();
+
+moveRunnerBox();
+
+runnerTimer = setInterval(()=>{
+
+runnerTimeLeft--;
+
+document.getElementById("runnerTime")
+.innerText = runnerTimeLeft;
+
+if(runnerTimeLeft <= 0){
+
+clearInterval(runnerTimer);
+
+clearInterval(autoMove);
+
+alert(
+"⏰ Time's up!\nYour score: " + runnerScore
+);
+
+}
+
+},1000);
+
+autoMove = setInterval(()=>{
+
+moveRunnerBox();
+
+},moveSpeed);
+
+}
+
+</script>
+
+</body>
+</html>
